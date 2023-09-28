@@ -461,6 +461,7 @@ robyn_mmm <- function(InputCollect,
     prophet_vars <- InputCollect$prophet_vars
     adstock <- InputCollect$adstock
     context_signs <- InputCollect$context_signs
+    context_upper_bounds <- InputCollect$context_upper_bounds
     paid_media_signs <- InputCollect$paid_media_signs
     prophet_signs <- InputCollect$prophet_signs
     organic_signs <- InputCollect$organic_signs
@@ -621,7 +622,7 @@ robyn_mmm <- function(InputCollect,
               y_val <- y_test <- x_val <- x_test <- NULL
             }
 
-            ## Define and set sign control
+            ## Define and set sign control and bounds
             dt_sign <- select(dt_window, -.data$dep_var)
             x_sign <- c(prophet_signs, context_signs, paid_media_signs, organic_signs)
             names(x_sign) <- c(prophet_vars, context_vars, paid_media_spends, organic_vars)
@@ -649,6 +650,13 @@ robyn_mmm <- function(InputCollect,
               } else {
                 lower.limits <- c(lower.limits, ifelse(x_sign[s] == "positive", 0, -Inf))
                 upper.limits <- c(upper.limits, ifelse(x_sign[s] == "negative", 0, Inf))
+              }
+            }
+            if(!all(is.infinite(context_upper_bounds))){
+              for(s in which(!is.infinite(context_upper_bounds))){
+                if (check_factor[s] == FALSE){
+                  upper.limits[length(prophet_signs)+s] <- min(upper.limits[length(prophet_signs)+s], context_upper_bounds[s])
+                }
               }
             }
 
