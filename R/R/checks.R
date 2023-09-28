@@ -199,14 +199,21 @@ check_prophet <- function(dt_holidays, prophet_country, prophet_vars, prophet_si
   }
 }
 
-check_context <- function(dt_input, context_vars, context_signs) {
+check_context <- function(dt_input, context_vars, context_signs, context_upper_bounds) {
   if (!is.null(context_vars)) {
     if (is.null(context_signs)) context_signs <- rep("default", length(context_vars))
+    if (is.null(context_upper_bounds)) context_upper_bounds <- rep(Inf, length(context_vars))
     if (!all(context_signs %in% OPTS_PDN)) {
       stop("Allowed values for 'context_signs' are: ", paste(OPTS_PDN, collapse = ", "))
     }
+    if (!is.numeric(context_upper_bounds)) {
+      stop("Allowed values for context_upper_bounds are numeric")
+    }
     if (length(context_signs) != length(context_vars)) {
       stop("Input 'context_signs' must have same length as 'context_vars'")
+    }
+    if (length(context_upper_bounds) != length(context_vars)) {
+      stop("Input 'context_upper_bounds' must have same length as 'context_vars'")
     }
     temp <- context_vars %in% names(dt_input)
     if (!all(temp)) {
@@ -215,7 +222,7 @@ check_context <- function(dt_input, context_vars, context_signs) {
         v2t(context_vars[!temp])
       ))
     }
-    return(invisible(list(context_signs = context_signs)))
+    return(invisible(list(context_signs = context_signs, context_upper_bounds = context_upper_bounds)))
   }
 }
 
