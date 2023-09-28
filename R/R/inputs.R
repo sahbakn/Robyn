@@ -63,6 +63,8 @@
 #' the signs of coefficients for context_vars. Must have same
 #' order and same length as \code{context_vars}. By default it's
 #' set to 'defualt'.
+#' @param context_upper_bound Numeric vector. To impose upper bounds on
+#' the \code{context_vars} coefficients.
 #' @param organic_vars Character vector. Typically newsletter sendings,
 #' push-notifications, social media posts etc. Compared to \code{paid_media_vars}
 #' \code{organic_vars} are often marketing activities without clear spends.
@@ -161,6 +163,7 @@ robyn_inputs <- function(dt_input = NULL,
                          organic_signs = NULL,
                          context_vars = NULL,
                          context_signs = NULL,
+                         context_upper_bounds = NULL,
                          factor_vars = NULL,
                          dt_holidays = Robyn::dt_prophet_holidays,
                          prophet_vars = NULL,
@@ -219,8 +222,9 @@ robyn_inputs <- function(dt_input = NULL,
     prophet_signs <- check_prophet(dt_holidays, prophet_country, prophet_vars, prophet_signs, dayInterval)
 
     ## Check baseline variables (and maybe transform context_signs)
-    context <- check_context(dt_input, context_vars, context_signs)
+    context <- check_context(dt_input, context_vars, context_signs, context_upper_bounds)
     context_signs <- context$context_signs
+    context_upper_bounds <- context$context_upper_bounds
 
     ## Check paid media variables (set mediaVarCount and maybe transform paid_media_signs)
     if (is.null(paid_media_vars)) paid_media_vars <- paid_media_spends
@@ -291,6 +295,7 @@ robyn_inputs <- function(dt_input = NULL,
       prophet_country = prophet_country,
       context_vars = context_vars,
       context_signs = context_signs,
+      context_upper_bounds = context_upper_bounds,
       paid_media_vars = paid_media_vars,
       paid_media_signs = paid_media_signs,
       paid_media_spends = paid_media_spends,
