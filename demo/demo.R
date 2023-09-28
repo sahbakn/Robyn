@@ -71,6 +71,7 @@ InputCollect <- robyn_inputs(
   prophet_vars = c("trend", "season", "holiday"), # "trend","season", "weekday" & "holiday"
   prophet_country = "DE", # input country code. Check: dt_prophet_holidays
   context_vars = c("competitor_sales_B", "events"), # e.g. competitors, discount, unemployment etc
+  context_upper_bounds = c(5, Inf),
   paid_media_spends = c("tv_S", "ooh_S", "print_S", "facebook_S", "search_S"), # mandatory input
   paid_media_vars = c("tv_S", "ooh_S", "print_S", "facebook_I", "search_clicks_P"), # mandatory.
   # paid_media_vars must have same order as paid_media_spends. Use media exposure metrics like
